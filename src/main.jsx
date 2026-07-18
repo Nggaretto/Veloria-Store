@@ -1,7 +1,6 @@
-// main.jsx
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
+import { HashRouter } from "react-router-dom"; // قمنا بتغييرها هنا
 import { Toaster } from "react-hot-toast";
 
 import "./index.css";
@@ -11,14 +10,14 @@ import { CartProvider } from "./context/CartContext";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    {/* أضف basename هنا بالضبط */}
-    <BrowserRouter basename="/Veloria-Store/">
+    {/* HashRouter لا يحتاج إلى basename */}
+    <HashRouter>
       <AuthProvider>
         <CartProvider>
           <App />
           <Toaster position="top-right" />
         </CartProvider>
       </AuthProvider>
-    </BrowserRouter>
+    </HashRouter>
   </StrictMode>
-);
+)
