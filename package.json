@@ -1,6 +1,7 @@
 {
   "name": "veloria",
   "private": true,
+  "homepage": "https://nggaretto.github.io/Veloria-Store",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
