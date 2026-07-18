@@ -1,0 +1,61 @@
+:root {
+    --main-pink: #ffdae9; /* البمبا السوفت */
+    --dark-pink: #f48fb1; /* بمبا أغمق قليلاً للأزرار */
+    --white: #ffffff;
+    --text-color: #555;
+    --soft-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    background-color: #fffafc; /* خلفية مائلة للبياض الوردي */
+    color: var(--text-color);
+    direction: rtl;
+}
+
+header {
+    background-color: var(--white);
+    padding: 20px;
+    text-align: center;
+    border-bottom: 2px solid var(--main-pink);
+    box-shadow: var(--soft-shadow);
+}
+
+h1 {
+    color: var(--dark-pink);
+    margin: 0;
+    letter-spacing: 2px;
+    font-size: 2rem;
+}
+
+/* تصميم الكروت (المنتجات) بشكل سوفت */
+.product-card {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: var(--soft-shadow);
+    transition: transform 0.3s ease; /* انسيابية */
+    border: 1px solid var(--main-pink);
+    text-align: center;
+}
+
+.product-card:hover {
+    transform: translateY(-5px); /* حركة خفيفة عند الوقوف بالماوس */
+}
+
+button {
+    background-color: var(--main-pink);
+    color: #880e4f;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+button:hover {
+    background-color: var(--dark-pink);
+    color: white;
+}

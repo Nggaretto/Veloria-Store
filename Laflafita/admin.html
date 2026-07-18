@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم لافلفيتا الملكية 👑</title>
+    <style>
+        :root {
+            --soft-pink: #ffdae9;
+            --deep-pink: #f48fb1;
+            --white: #ffffff;
+            --bg: #fffafc;
+            --text: #5d4037;
+            --shadow: 0 10px 30px rgba(244, 143, 177, 0.2);
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); margin: 0; color: var(--text); }
+        header { background: var(--white); padding: 20px; text-align: center; box-shadow: var(--shadow); border-bottom: 4px solid var(--soft-pink); }
+        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 9999; display: flex; justify-content: center; align-items: center; }
+        .login-box { background: white; padding: 40px; border-radius: 30px; box-shadow: var(--shadow); text-align: center; width: 90%; max-width: 400px; }
+        .admin-nav { display: flex; justify-content: center; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
+        .nav-btn { background: var(--white); border: 2px solid var(--soft-pink); padding: 12px 25px; border-radius: 50px; cursor: pointer; font-weight: bold; color: var(--deep-pink); }
+        .nav-btn.active { background: var(--deep-pink); color: white; }
+        .section { display: none; max-width: 800px; margin: 0 auto 50px; background: white; padding: 30px; border-radius: 30px; box-shadow: var(--shadow); }
+        .section.active { display: block; }
+        .form-group { margin-bottom: 15px; text-align: right; }
+        input, select, textarea { width: 100%; padding: 12px; border: 2px solid var(--soft-pink); border-radius: 12px; outline: none; font-family: inherit; }
+        .btn-save { background: var(--deep-pink); color: white; border: none; padding: 15px; width: 100%; border-radius: 15px; font-weight: bold; cursor: pointer; font-size: 1.1rem; }
+        .order-card { background: var(--bg); border: 1px solid var(--soft-pink); padding: 15px; border-radius: 20px; margin-bottom: 15px; text-align: right; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 10px; max-width: 800px; margin: 0 auto; }
+        .stat-card { background: white; padding: 15px; border-radius: 20px; text-align: center; box-shadow: var(--shadow); border: 1px solid var(--soft-pink); }
+    </style>
+</head>
+<body>
+
+    <div id="login-overlay">
+        <div class="login-box">
+            <h2 style="color: var(--deep-pink);">دخول الأدمن 🎀</h2>
+            <input type="password" id="admin-pass" placeholder="كلمة المرور" style="text-align: center;">
+            <button class="btn-save" onclick="checkLogin()">دخول ✨</button>
+            <p id="login-error" style="color: red; display: none; margin-top: 10px;">الباسورد غلط 🌸</p>
+        </div>
+    </div>
+
+    <header><h1>لوحة تحكم لافلفيتا 👑</h1></header>
+
+    <div class="stats-grid">
+        <div class="stat-card"><h3>المبيعات</h3><p id="stat-total">0 ج.م</p></div>
+        <div class="stat-card"><h3>طلبات</h3><p id="stat-active-count">0</p></div>
+    </div>
+
+    <div class="admin-nav">
+        <button class="nav-btn active" onclick="showSection('orders-sec', this)">📥 الطلبات</button>
+        <button class="nav-btn" onclick="showSection('add-sec', this)">🛍️ إضافة منتج</button>
+    </div>
+
+    <div id="orders-sec" class="section active">
+        <h2 style="text-align: center; color: var(--deep-pink);">الطلبات الجديدة</h2>
+        <div id="orders-list"></div>
+    </div>
+
+    <div id="add-sec" class="section">
+        <h2 style="color: var(--deep-pink);">إضافة منتج جديد ✨</h2>
+        <div class="form-group"><label>اسم المنتج</label><input type="text" id="p-name"></div>
+        <div class="form-group">
+            <label>القسم</label>
+            <select id="p-cat">
+                <option>بادي اسبلاش</option>
+                <option>ملمع شفاه</option>
+                <option>صابون</option>
+                <option>لوشن</option>
+            </select>
+        </div>
+        <div class="form-group"><label>السعر</label><input type="number" id="p-price"></div>
+        <div class="form-group"><label>الوصف</label><textarea id="p-desc" rows="2"></textarea></div>
+        <div class="form-group">
+            <label>رابط الصورة (اختياري) 📷</label>
+            <input type="text" id="p-img-url" placeholder="ضع رابط الصورة هنا">
+            <small style="color: #999;">ممكن ترفع الصورة على ImgBB وتحط الرابط هنا</small>
+        </div>
+        <button class="btn-save" onclick="saveNewProduct()">نشر المنتج الآن 🚀</button>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAoqR1UqFt0MT7dxFtjNCkZB3W-6NVaf7A",
+            authDomain: "laflafeta.firebaseapp.com",
+            databaseURL: "https://laflafeta-default-rtdb.asia-southeast1.firebasedatabase.app", 
+            projectId: "laflafeta",
+            storageBucket: "laflafeta.firebasestorage.app",
+            messagingSenderId: "878138717919",
+            appId: "1:878138717919:web:74c9c0e694888eb1465b6a"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        function checkLogin() {
+            if (document.getElementById('admin-pass').value === "lavalvita_boss") {
+                document.getElementById('login-overlay').style.display = "none";
+                loadData();
+            } else {
+                document.getElementById('login-error').style.display = "block";
+            }
+        }
+
+        async function saveNewProduct() {
+            const name = document.getElementById('p-name').value;
+            const price = document.getElementById('p-price').value;
+            const cat = document.getElementById('p-cat').value;
+            const desc = document.getElementById('p-desc').value;
+            let img = document.getElementById('p-img-url').value;
+
+            if (!name || !price) return alert("اكتبي الاسم والسعر يا قمر 🌸");
+            
+            // لو محطش صورة، بنحط صورة "قريباً" افتراضية
+            if (!img) img = "https://via.placeholder.com/300x300?text=LaVelvita+🎀";
+
+            try {
+                await db.ref('products').push({
+                    name, price: parseFloat(price), category: cat, desc, img
+                });
+                alert("تم النشر بنجاح! 🎉");
+                location.reload();
+            } catch (e) {
+                alert("خطأ: " + e.message);
+            }
+        }
+
+        function loadData() {
+            db.ref('orders').on('value', (snap) => {
+                const data = snap.val();
+                const list = document.getElementById('orders-list');
+                let total = 0, count = 0;
+                list.innerHTML = "";
+                if (data) {
+                    Object.keys(data).forEach(id => {
+                        const o = data[id];
+                        list.innerHTML += `<div class="order-card">
+                            <b># الأوردر: ${id.slice(-5)}</b><br>
+                            الاسم: ${o.customer.name}<br>
+                            المبلغ: ${o.total} ج.م<br>
+                            <button onclick="db.ref('orders/${id}').remove()" style="color:red; background:none; border:none; cursor:pointer;">حذف 🗑️</button>
+                        </div>`;
+                        total += o.total;
+                        count++;
+                    });
+                }
+                document.getElementById('stat-total').innerText = total + " ج.م";
+                document.getElementById('stat-active-count').innerText = count;
+            });
+        }
+
+        function showSection(id, btn) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            btn.classList.add('active');
+        }
+    </script>
+</body>
+</html>
