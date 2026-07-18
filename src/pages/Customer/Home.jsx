@@ -40,7 +40,7 @@ export default function Home() {
         className="relative h-[65vh] min-h-[380px] md:h-[75vh] w-full overflow-hidden"
       >
         <img
-          src="/veloria-banner.jpg"
+          src="veloria-banner.jpg"
           alt="Veloria - Pure Care for Naturally Beautiful Hair"
           className="w-full h-full object-cover"
         />
@@ -148,7 +148,7 @@ export default function Home() {
               </svg>
               <div className="relative rounded-full p-[3px] bg-gradient-to-br from-[#E8C7A0] via-[#C98A5E] to-[#5A2D20] shadow-2xl">
                 <img
-                  src="/logo.png"
+                  src="logo.png"
                   alt="Veloria"
                   className="relative h-28 w-28 md:h-32 md:w-32 rounded-full object-cover ring-4 ring-[#F8F3EE]"
                 />

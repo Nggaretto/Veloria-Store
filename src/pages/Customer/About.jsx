@@ -27,7 +27,7 @@ export default function About() {
     <div className="min-h-screen bg-[#F8F3EE] flex items-center justify-center px-6 py-16">
       <div className="max-w-3xl bg-white rounded-3xl shadow-lg p-10 text-center">
         <img
-          src="/logo.png"
+          src="logo.png"
           alt="Veloria"
           className="h-32 w-32 mx-auto rounded-full object-cover shadow-lg ring-4 ring-[#F8F3EE] mb-8"
         />
